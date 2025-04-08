@@ -1,0 +1,15 @@
+apiVersion: v2
+name: qfieldcloud
+description: A Helm chart for QField Cloud
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+maintainers:
+  - name: QField Cloud Team
+keywords:
+  - qfield
+  - cloud
+  - gis
+home: https://github.com/opengisch/qfieldcloud
+sources:
+  - https://github.com/opengisch/qfieldcloud 

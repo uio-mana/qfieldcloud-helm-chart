@@ -1,0 +1,44 @@
+{{- if .Values.persistence.static.enabled -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "qfieldcloud.fullname" . }}-static
+  labels:
+    {{- include "qfieldcloud.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .Values.persistence.static.size }}
+{{- end }}
+---
+{{- if .Values.persistence.media.enabled -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "qfieldcloud.fullname" . }}-media
+  labels:
+    {{- include "qfieldcloud.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .Values.persistence.media.size }}
+{{- end }}
+---
+{{- if .Values.persistence.transformationGrids.enabled -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "qfieldcloud.fullname" . }}-transformation-grids
+  labels:
+    {{- include "qfieldcloud.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .Values.persistence.transformationGrids.size }}
+{{- end }} 

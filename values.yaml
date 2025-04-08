@@ -1,0 +1,178 @@
+# Default values for qfieldcloud
+replicaCount: 1
+
+image:
+  repository: opengisch/qfieldcloud
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Django application configuration
+django:
+  gunicorn:
+    timeout: 120
+    maxRequests: 1000
+    workers: 4
+    threads: 2
+  settings:
+    debug: false
+    environment: production
+    secretKey: ""  # Should be provided via secret
+    allowedHosts: "*"
+    settingsModule: "qfieldcloud.settings"
+    accountEmailVerification: "mandatory"
+    useI18n: true
+    defaultLanguage: "en"
+    defaultTimeZone: "UTC"
+    authTokenExpirationHours: 24
+    passwordLoginDisabled: false
+    subscriptionModel: "free"
+  sentry:
+    dsn: ""
+    release: ""
+    sampleRate: 0.1
+  email:
+    host: ""
+    useTls: true
+    useSsl: false
+    port: 587
+    hostUser: ""
+    hostPassword: ""  # Should be provided via secret
+    defaultFromEmail: "noreply@example.com"
+  storage:
+    type: "local"  # local, s3, etc.
+    accessKeyId: ""  # Should be provided via secret
+    secretAccessKey: ""  # Should be provided via secret
+    bucketName: ""
+    regionName: ""
+    endpointUrl: ""
+    projectDefaultStorage: "local"
+
+# Database configuration
+database:
+  # External database configuration
+  external: true
+  host: ""
+  port: 5432
+  name: "qfieldcloud"
+  user: "qfieldcloud"
+  password: ""  # Should be provided via secret
+  sslMode: "prefer"
+
+# Geodatabase configuration
+geodatabase:
+  # External geodatabase configuration
+  external: true
+  host: ""
+  port: 5432
+  name: "qfieldcloud_geodb"
+  user: "qfieldcloud"
+  password: ""  # Should be provided via secret
+
+# QGIS configuration
+qgis:
+  image:
+    repository: opengisch/qfieldcloud-qgis
+    tag: latest
+    pullPolicy: IfNotPresent
+  transformationGrids:
+    # If true, will download transformation grids as an init container
+    downloadOnStartup: true
+    # URL to download transformation grids from
+    sourceUrl: "https://cdn.proj.org/"
+
+# Worker configuration
+worker:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: opengisch/qfieldcloud
+    tag: latest
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+# Memcached configuration
+memcached:
+  enabled: true
+  image:
+    repository: memcached
+    tag: "1"
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
+
+# Cron jobs configuration
+cronJobs:
+  enabled: true
+  image:
+    repository: opengisch/qfieldcloud
+    tag: latest
+    pullPolicy: IfNotPresent
+  schedule: "@every 1m"
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 80
+
+# Ingress configuration
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+# Resource configuration
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+# Pod configuration
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Persistent volume configuration
+persistence:
+  static:
+    enabled: true
+    size: 1Gi
+  media:
+    enabled: true
+    size: 10Gi
+  transformationGrids:
+    enabled: true
+    size: 1Gi
+
+serviceAccount:
+  create: true
+  name: "" 

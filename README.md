@@ -29,4 +29,4 @@ Contributions will be welcome once the initial Helm chart is added to this repos
 
 ## License
 
-This Helm chart will be licensed under the same terms as QField Cloud. 
+This Helm chart will be licensed under the same terms as QField Cloud.

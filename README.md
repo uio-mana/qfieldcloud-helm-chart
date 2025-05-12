@@ -2,6 +2,13 @@
 
 This Helm chart deploys QField Cloud to Kubernetes.
 
+## Adding the Helm Repository
+
+```bash
+helm repo add qfieldcloud https://opengisch.github.io/qfieldcloud-helm-chart
+helm repo update
+```
+
 ## Prerequisites
 
 - Kubernetes 1.19+
@@ -14,7 +21,7 @@ This Helm chart deploys QField Cloud to Kubernetes.
 To install the chart with the release name `qfieldcloud`:
 
 ```bash
-helm install qfieldcloud .
+helm install qfieldcloud qfieldcloud/qfieldcloud
 ```
 
 The command deploys QField Cloud on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
@@ -214,19 +221,19 @@ The chart is designed to work with external databases (PostgreSQL and PostGIS) r
 ### Basic installation
 
 ```bash
-helm install qfieldcloud .
+helm install qfieldcloud qfieldcloud/qfieldcloud
 ```
 
 ### Installation with custom values
 
 ```bash
-helm install qfieldcloud . --set django.settings.environment=production
+helm install qfieldcloud qfieldcloud/qfieldcloud --set django.settings.environment=production
 ```
 
 ### Installation with external databases
 
 ```bash
-helm install qfieldcloud . \
+helm install qfieldcloud qfieldcloud/qfieldcloud \
   --set database.external=true \
   --set database.host=my-postgres-host \
   --set database.name=qfieldcloud \
@@ -242,7 +249,7 @@ helm install qfieldcloud . \
 ### Installation with ingress
 
 ```bash
-helm install qfieldcloud . \
+helm install qfieldcloud qfieldcloud/qfieldcloud \
   --set ingress.enabled=true \
   --set ingress.className=nginx \
   --set ingress.hosts[0].host=qfieldcloud.example.com \
@@ -251,6 +258,21 @@ helm install qfieldcloud . \
   --set ingress.tls[0].secretName=qfieldcloud-tls \
   --set ingress.tls[0].hosts[0]=qfieldcloud.example.com
 ```
+
+## Development
+
+### Packaging the Chart
+
+To package the chart and update the repository index:
+
+```bash
+./package.sh
+```
+
+This will:
+1. Package the chart into a .tgz file
+2. Update the repository index
+3. Create/update the index.yaml file
 
 ## License
 

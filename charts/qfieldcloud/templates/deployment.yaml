@@ -15,20 +15,6 @@ spec:
         {{- include "qfieldcloud.selectorLabels" . | nindent 8 }}
     spec:
       serviceAccountName: {{ include "qfieldcloud.serviceAccountName" . }}
-      initContainers:
-        {{- if .Values.qgis.transformationGrids.downloadOnStartup }}
-        - name: download-transformation-grids
-          image: k3rnelpan1c/alpine-wget:latest
-          command: 
-            - /bin/sh
-            - -c
-            - |
-              wget --mirror {{ .Values.qgis.transformationGrids.sourceUrl }} -P /transformation_grids --no-host-directories
-              chmod a+r /transformation_grids/*
-          volumeMounts:
-            - name: transformation-grids
-              mountPath: /transformation_grids
-        {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

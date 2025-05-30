@@ -114,6 +114,8 @@ spec:
               value: {{ .Values.qgis.image.repository }}:{{ .Values.qgis.image.tag }}
             - name: QFIELDCLOUD_WORKER_QFIELDCLOUD_URL
               value: {{ .Values.django.settings.workerQfieldcloudUrl | quote }}
+            - name: QFIELDCLOUD_HOST
+              value: {{ (index .Values.ingress.hosts 0).host | quote }}
           volumeMounts:
             - name: transformation-grids
               mountPath: /transformation_grids

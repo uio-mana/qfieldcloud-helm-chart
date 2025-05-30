@@ -64,7 +64,7 @@ django:
           file_overwrite: false
           object_parameters: {}
           default_acl: "private"
-          QFC_IS_LEGACY: false
+        QFC_IS_LEGACY: false
 
 # Database configuration
 database:

@@ -39,13 +39,13 @@ spec:
             - --bind
             - 0.0.0.0:{{ .Values.service.port }}
             - --timeout
-            - {{ .Values.django.gunicorn.timeout | toString }}
+            - {{ .Values.django.gunicorn.timeout | quote }}
             - --max-requests
-            - {{ .Values.django.gunicorn.maxRequests | toString }}
+            - {{ .Values.django.gunicorn.maxRequests | quote }}
             - --workers
-            - {{ .Values.django.gunicorn.workers | toString }}
+            - {{ .Values.django.gunicorn.workers | quote }}
             - --threads
-            - {{ .Values.django.gunicorn.threads | toString }}
+            - {{ .Values.django.gunicorn.threads | quote }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}

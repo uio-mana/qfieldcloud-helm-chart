@@ -1,0 +1,17 @@
+{{- if .Values.persistence.transformationGrids.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "qfieldcloud.fullname" . }}-worker-{{ .Release.Revision }}-{{ .Release.Time.Seconds }}-transformation-grids
+  labels:
+    {{- include "qfieldcloud.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - {{ .Values.persistence.transformationGrids.accessMode | quote }}
+  {{- if .Values.persistence.transformationGrids.storageClass }}
+  storageClassName: {{ .Values.persistence.transformationGrids.storageClass | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.transformationGrids.size | quote }}
+{{- end }} 

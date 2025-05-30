@@ -180,15 +180,11 @@ affinity: {}
 
 # Persistent volume configuration
 persistence:
-  static:
-    enabled: true
-    size: 1Gi
-  media:
-    enabled: true
-    size: 10Gi
   transformationGrids:
     enabled: true
     size: 1Gi
+    accessMode: ReadWriteOnce
+    storageClass: ""  # Use default storage class if empty
 
 serviceAccount:
   create: true

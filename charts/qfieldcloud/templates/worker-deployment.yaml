@@ -19,6 +19,18 @@ spec:
         app.kubernetes.io/component: worker
     spec:
       serviceAccountName: {{ include "qfieldcloud.serviceAccountName" . }}
+      initContainers:
+        - name: download-transformation-grids
+          image: k3rnelpan1c/alpine-wget:latest
+          command: 
+            - /bin/sh
+            - -c
+            - |
+              wget --mirror {{ .Values.qgis.transformationGrids.sourceUrl }} -P /transformation_grids --no-host-directories
+              chmod a+r /transformation_grids/*
+          volumeMounts:
+            - name: transformation-grids
+              mountPath: /transformation_grids
       containers:
         - name: worker
           image: "{{ .Values.worker.image.repository }}:{{ .Values.worker.image.tag }}"
@@ -102,33 +114,15 @@ spec:
             - name: QFIELDCLOUD_WORKER_QFIELDCLOUD_URL
               value: {{ .Values.django.settings.workerQfieldcloudUrl | quote }}
           volumeMounts:
-            - name: static-volume
-              mountPath: /usr/src/app/staticfiles
-            - name: media-volume
-              mountPath: /usr/src/app/mediafiles
             - name: transformation-grids
               mountPath: /transformation_grids
           resources:
             {{- toYaml .Values.worker.resources | nindent 12 }}
       volumes:
-        - name: static-volume
-          {{- if .Values.persistence.static.enabled }}
-          persistentVolumeClaim:
-            claimName: {{ include "qfieldcloud.fullname" . }}-static
-          {{- else }}
-          emptyDir: {}
-          {{- end }}
-        - name: media-volume
-          {{- if .Values.persistence.media.enabled }}
-          persistentVolumeClaim:
-            claimName: {{ include "qfieldcloud.fullname" . }}-media
-          {{- else }}
-          emptyDir: {}
-          {{- end }}
         - name: transformation-grids
           {{- if .Values.persistence.transformationGrids.enabled }}
           persistentVolumeClaim:
-            claimName: {{ include "qfieldcloud.fullname" . }}-transformation-grids
+            claimName: {{ include "qfieldcloud.fullname" . }}-worker-{{ .Release.Revision }}-{{ .Release.Time.Seconds }}-transformation-grids
           {{- else }}
           emptyDir: {}
           {{- end }}

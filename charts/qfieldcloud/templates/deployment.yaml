@@ -101,23 +101,7 @@ spec:
             - name: STORAGE_ENDPOINT_URL
               value: {{ .Values.django.storage.endpointUrl | quote }}
             - name: STORAGES
-              value: |
-                {
-                  "default": {
-                    "BACKEND": "qfieldcloud.filestorage.backend.QfcS3Boto3Storage",
-                    "OPTIONS": {
-                      "access_key": "{{ .Values.django.storage.accessKeyId }}",
-                      "secret_key": "{{ .Values.django.storage.secretAccessKey }}",
-                      "bucket_name": "{{ .Values.django.storage.bucketName }}",
-                      "region_name": "{{ .Values.django.storage.regionName }}",
-                      "endpoint_url": "{{ .Values.django.storage.endpointUrl }}",
-                      "custom_domain": null,
-                      "file_overwrite": false,
-                      "object_parameters": {},
-                      "default_acl": "private"
-                    }
-                  }
-                }
+              value: {{ .Values.django.storage.type | quote }}
             - name: STORAGES_PROJECT_DEFAULT_STORAGE
               value: {{ .Values.django.storage.projectDefaultStorage | quote }}
             - name: GEODB_HOST

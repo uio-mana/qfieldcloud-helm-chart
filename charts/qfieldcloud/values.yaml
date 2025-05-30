@@ -43,12 +43,28 @@ django:
     defaultFromEmail: "noreply@example.com"
   storage:
     type: "s3"  # local, s3, etc.
-    accessKeyId: ""  # Should be provided via secret
-    secretAccessKey: ""  # Should be provided via secret
-    bucketName: "qfieldcloud"  # Default bucket name
-    regionName: "us-east-1"  # Default region
-    endpointUrl: ""  # Leave empty for AWS S3, set for other S3-compatible storage
+    accessKeyId: "minioadmin"  # Default from env.example
+    secretAccessKey: "minioadmin"  # Default from env.example
+    bucketName: "qfieldcloud-local"  # Default from env.example
+    regionName: ""  # Empty by default as in env.example
+    endpointUrl: "http://172.17.0.1:8009"  # Default from env.example
     projectDefaultStorage: "default"  # Should match the storage backend name in STORAGES
+    minioApiPort: 8009  # Default from env.example
+    minioBrowserPort: 8010  # Default from env.example
+    storagesConfig:
+      default:
+        BACKEND: "qfieldcloud.filestorage.backend.QfcS3Boto3Storage"
+        OPTIONS:
+          access_key: "minioadmin"
+          secret_key: "minioadmin"
+          bucket_name: "qfieldcloud-local"
+          region_name: ""
+          endpoint_url: "http://172.17.0.1:8009"
+          custom_domain: null
+          file_overwrite: false
+          object_parameters: {}
+          default_acl: "private"
+          QFC_IS_LEGACY: false
 
 # Database configuration
 database:

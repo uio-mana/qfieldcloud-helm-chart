@@ -64,21 +64,12 @@ spec:
               value: {{ .Values.database.port | quote }}
             - name: POSTGRES_SSLMODE
               value: {{ .Values.database.sslMode | quote }}
-            - name: STORAGE_ACCESS_KEY_ID
-              value: {{ .Values.django.storage.accessKeyId | quote }}
-            - name: STORAGE_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "qfieldcloud.fullname" . }}-storage
-                  key: secret-access-key
-            - name: STORAGE_BUCKET_NAME
-              value: {{ .Values.django.storage.bucketName | quote }}
-            - name: STORAGE_REGION_NAME
-              value: {{ .Values.django.storage.regionName | quote }}
-            - name: STORAGE_ENDPOINT_URL
-              value: {{ .Values.django.storage.endpointUrl | quote }}
+            - name: MINIO_API_PORT
+              value: {{ .Values.django.storage.minioApiPort | quote }}
+            - name: MINIO_BROWSER_PORT
+              value: {{ .Values.django.storage.minioBrowserPort | quote }}
             - name: STORAGES
-              value: {{ .Values.django.storage.type | quote }}
+              value: {{ .Values.django.storage.storagesConfig | toJson | quote }}
             - name: STORAGES_PROJECT_DEFAULT_STORAGE
               value: {{ .Values.django.storage.projectDefaultStorage | quote }}
             - name: GEODB_HOST

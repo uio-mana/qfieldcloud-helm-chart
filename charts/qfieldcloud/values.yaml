@@ -88,7 +88,7 @@ worker:
   enabled: true
   replicaCount: 1
   image:
-    repository: opengisch/qfieldcloud
+    repository: opengisch/qfieldcloud-app
     tag: latest
     pullPolicy: IfNotPresent
   resources:
@@ -118,7 +118,7 @@ memcached:
 cronJobs:
   enabled: true
   image:
-    repository: opengisch/qfieldcloud
+    repository: opengisch/qfieldcloud-app
     tag: latest
     pullPolicy: IfNotPresent
   schedule: "@every 1m"

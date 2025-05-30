@@ -23,7 +23,7 @@ django:
     allowedHosts: "*"
     settingsModule: "qfieldcloud.settings"
     accountEmailVerification: "mandatory"
-    useI18n: true
+    useI18n: 1
     defaultLanguage: "en"
     defaultTimeZone: "UTC"
     authTokenExpirationHours: 24

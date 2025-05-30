@@ -97,6 +97,8 @@ spec:
               value: {{ .Values.django.settings.defaultTimeZone | quote }}
             - name: QFIELDCLOUD_QGIS_IMAGE_NAME
               value: {{ .Values.qgis.image.repository }}:{{ .Values.qgis.image.tag }}
+            - name: QFIELDCLOUD_WORKER_QFIELDCLOUD_URL
+              value: {{ .Values.django.settings.workerQfieldcloudUrl | quote }}
           volumeMounts:
             - name: static-volume
               mountPath: /usr/src/app/staticfiles

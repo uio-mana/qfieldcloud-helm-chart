@@ -29,6 +29,7 @@ django:
     authTokenExpirationHours: 24
     passwordLoginDisabled: false
     subscriptionModel: "free"
+    workerQfieldcloudUrl: "http://app:8000/api/v1/"  # URL used by worker to communicate with the main app
   sentry:
     dsn: ""
     release: ""

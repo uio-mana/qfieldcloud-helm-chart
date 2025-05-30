@@ -105,6 +105,8 @@ spec:
                   value: {{ .Values.django.settings.defaultTimeZone | quote }}
                 - name: QFIELDCLOUD_QGIS_IMAGE_NAME
                   value: {{ .Values.qgis.image.repository }}:{{ .Values.qgis.image.tag }}
+                - name: QFIELDCLOUD_HOST
+                  value: {{ (index .Values.ingress.hosts 0).host | quote }}
               resources:
                 {{- toYaml .Values.cronJobs.resources | nindent 16 }}
           restartPolicy: OnFailure

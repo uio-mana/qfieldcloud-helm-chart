@@ -42,13 +42,13 @@ django:
     hostPassword: ""  # Should be provided via secret
     defaultFromEmail: "noreply@example.com"
   storage:
-    type: "local"  # local, s3, etc.
+    type: "s3"  # local, s3, etc.
     accessKeyId: ""  # Should be provided via secret
     secretAccessKey: ""  # Should be provided via secret
-    bucketName: ""
-    regionName: ""
-    endpointUrl: ""
-    projectDefaultStorage: "local"
+    bucketName: "qfieldcloud"  # Default bucket name
+    regionName: "us-east-1"  # Default region
+    endpointUrl: ""  # Leave empty for AWS S3, set for other S3-compatible storage
+    projectDefaultStorage: "default"  # Should match the storage backend name in STORAGES
 
 # Database configuration
 database:

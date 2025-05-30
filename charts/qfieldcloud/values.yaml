@@ -17,7 +17,7 @@ django:
     workers: 4
     threads: 2
   settings:
-    debug: false
+    debug: 1
     environment: production
     secretKey: ""  # Should be provided via secret
     allowedHosts: "*"

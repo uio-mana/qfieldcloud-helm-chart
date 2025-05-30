@@ -116,11 +116,30 @@ spec:
               value: {{ .Values.django.settings.workerQfieldcloudUrl | quote }}
             - name: QFIELDCLOUD_HOST
               value: {{ (index .Values.ingress.hosts 0).host | quote }}
+            - name: QFIELDCLOUD_QGIS_SERVICE_URL
+              value: "http://localhost:8000"  # QGIS service is available on localhost
           volumeMounts:
             - name: transformation-grids
               mountPath: /transformation_grids
           resources:
             {{- toYaml .Values.worker.resources | nindent 12 }}
+        - name: qgis
+          image: "{{ .Values.qgis.image.repository }}:{{ .Values.qgis.image.tag }}"
+          imagePullPolicy: {{ .Values.qgis.image.pullPolicy }}
+          command:
+            - python
+            - -m
+            - qfc_worker
+          env:
+            - name: PROJ_DOWNLOAD_DIR
+              value: "/transformation_grids"
+            - name: QT_QPA_PLATFORM
+              value: "offscreen"
+          volumeMounts:
+            - name: transformation-grids
+              mountPath: /transformation_grids
+          resources:
+            {{- toYaml .Values.qgis.resources | nindent 12 }}
       volumes:
         - name: transformation-grids
           {{- if .Values.persistence.transformationGrids.enabled }}
@@ -129,6 +148,10 @@ spec:
           {{- else }}
           emptyDir: {}
           {{- end }}
+        - name: docker-socket
+          hostPath:
+            path: /var/run/docker.sock
+            type: Socket
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

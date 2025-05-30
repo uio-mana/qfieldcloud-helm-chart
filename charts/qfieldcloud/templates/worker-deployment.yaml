@@ -1,12 +1,13 @@
 {{- if .Values.worker.enabled -}}
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "qfieldcloud.fullname" . }}-worker
   labels:
     {{- include "qfieldcloud.labels" . | nindent 4 }}
     app.kubernetes.io/component: worker
 spec:
+  serviceName: {{ include "qfieldcloud.fullname" . }}-worker
   replicas: {{ .Values.worker.replicaCount }}
   selector:
     matchLabels:
@@ -122,7 +123,7 @@ spec:
         - name: transformation-grids
           {{- if .Values.persistence.transformationGrids.enabled }}
           persistentVolumeClaim:
-            claimName: {{ include "qfieldcloud.fullname" . }}-worker-{{ .Release.Revision }}-{{ .Release.Time.Seconds }}-transformation-grids
+            claimName: transformation-grids-{{ .Release.Name }}-worker-$(POD_NAME)
           {{- else }}
           emptyDir: {}
           {{- end }}
@@ -138,4 +139,15 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+  volumeClaimTemplates:
+    - metadata:
+        name: transformation-grids
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        {{- if .Values.persistence.transformationGrids.storageClass }}
+        storageClassName: {{ .Values.persistence.transformationGrids.storageClass | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.transformationGrids.size | quote }}
 {{- end }} 

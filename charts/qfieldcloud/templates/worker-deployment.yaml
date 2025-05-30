@@ -85,6 +85,8 @@ spec:
                   key: password
             - name: GEODB_DB
               value: {{ .Values.geodatabase.name | quote }}
+            - name: ACCOUNT_EMAIL_VERIFICATION
+              value: {{ .Values.django.settings.accountEmailVerification | quote }}
             - name: QFIELDCLOUD_SUBSCRIPTION_MODEL
               value: {{ .Values.django.settings.subscriptionModel | quote }}
             - name: QFIELDCLOUD_AUTH_TOKEN_EXPIRATION_HOURS

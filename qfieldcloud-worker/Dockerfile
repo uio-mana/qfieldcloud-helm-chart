@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y wget
 # Create transformation grids directory and download grids
 RUN mkdir -p /transformation_grids
 ARG TRANSFORMATION_GRIDS_URL
-RUN wget --mirror ${TRANSFORMATION_GRIDS_URL} -P /transformation_grids --no-host-directories \
+RUN wget --mirror https://cdn.proj.org/ -P /transformation_grids --no-host-directories \
     && chmod a+r /transformation_grids/*
 
 # Copy the Kubernetes wrapper implementation

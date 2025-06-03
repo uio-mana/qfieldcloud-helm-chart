@@ -1,0 +1,29 @@
+{{- if and .Values.worker.kubernetes.enabled .Values.persistence.transformationGrids.enabled }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ include "qfieldcloud.fullname" . }}-transformation-grids
+spec:
+  capacity:
+    storage: {{ .Values.persistence.transformationGrids.size }}
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: {{ .Values.persistence.transformationGrids.storageClass }}
+  hostPath:
+    path: /transformation_grids
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "qfieldcloud.fullname" . }}-transformation-grids
+  namespace: {{ .Values.worker.kubernetes.namespace }}
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: {{ .Values.persistence.transformationGrids.storageClass }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.transformationGrids.size }}
+{{- end }} 

@@ -115,14 +115,32 @@ worker:
     repository: opengisch/qfieldcloud-app
     tag: latest
     pullPolicy: IfNotPresent
-    target: worker_wrapper_runtime  # Use the worker wrapper runtime that includes Docker client
   resources:
     limits:
       cpu: 500m
       memory: 512Mi
     requests:
-      cpu: 250m
-      memory: 256Mi
+      cpu: 100m
+      memory: 128Mi
+  # Kubernetes job configuration
+  kubernetes:
+    enabled: false  # Set to true to use Kubernetes jobs instead of Docker
+    namespace: default  # Namespace where jobs will be created
+    resources:
+      limits:
+        cpu: 1000m  # 1 CPU core
+        memory: 2Gi
+      requests:
+        cpu: 500m
+        memory: 1Gi
+    # Storage class for temporary volumes
+    storageClass: standard
+    # Node selector for job pods
+    nodeSelector: {}
+    # Tolerations for job pods
+    tolerations: []
+    # Affinity rules for job pods
+    affinity: {}
 
 # Memcached configuration
 memcached:

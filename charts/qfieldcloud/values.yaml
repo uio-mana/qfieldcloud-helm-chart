@@ -1,0 +1,217 @@
+# Default values for qfieldcloud
+replicaCount: 1
+
+image:
+  repository: opengisch/qfieldcloud-app
+  tag: latest
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Django application configuration
+django:
+  gunicorn:
+    timeout: 120
+    maxRequests: 1000
+    workers: 4
+    threads: 2
+  settings:
+    debug: 1
+    environment: production
+    secretKey: ""  # Should be provided via secret
+    allowedHosts: "*"
+    settingsModule: "qfieldcloud.settings"
+    accountEmailVerification: "mandatory"
+    useI18n: 1
+    defaultLanguage: "en"
+    defaultTimeZone: "UTC"
+    authTokenExpirationHours: 24
+    passwordLoginDisabled: false
+    subscriptionModel: "free"
+    workerQfieldcloudUrl: "http://app:8000/api/v1/"  # URL used by worker to communicate with the main app
+  sentry:
+    dsn: ""
+    release: ""
+    sampleRate: 0.1
+  email:
+    host: ""
+    useTls: true
+    useSsl: false
+    port: 587
+    hostUser: ""
+    hostPassword: ""  # Should be provided via secret
+    defaultFromEmail: "noreply@example.com"
+  storage:
+    type: "s3"  # local, s3, etc.
+    accessKeyId: "minioadmin"  # Default from env.example
+    secretAccessKey: "minioadmin"  # Default from env.example
+    bucketName: "qfieldcloud-local"  # Default from env.example
+    regionName: ""  # Empty by default as in env.example
+    endpointUrl: "http://172.17.0.1:8009"  # Default from env.example
+    projectDefaultStorage: "default"  # Should match the storage backend name in STORAGES
+    minioApiPort: 8009  # Default from env.example
+    minioBrowserPort: 8010  # Default from env.example
+    storagesConfig:
+      default:
+        BACKEND: "qfieldcloud.filestorage.backend.QfcS3Boto3Storage"
+        OPTIONS:
+          access_key: "minioadmin"
+          secret_key: "minioadmin"
+          bucket_name: "qfieldcloud-local"
+          region_name: ""
+          endpoint_url: "http://172.17.0.1:8009"
+          custom_domain: null
+          file_overwrite: false
+          object_parameters: {}
+          default_acl: "private"
+        QFC_IS_LEGACY: false
+
+# Database configuration
+database:
+  # External database configuration
+  external: true
+  host: ""
+  port: 5432
+  name: "qfieldcloud"
+  user: "qfieldcloud"
+  password: ""  # Should be provided via secret
+  sslMode: "prefer"
+
+# Geodatabase configuration
+geodatabase:
+  # External geodatabase configuration
+  external: true
+  host: ""
+  port: 5432
+  name: "qfieldcloud_geodb"
+  user: "qfieldcloud"
+  password: ""  # Should be provided via secret
+
+# QGIS configuration
+qgis:
+  image:
+    repository: opengisch/qfieldcloud-qgis
+    tag: latest
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  transformationGrids:
+    # If true, will download transformation grids as an init container
+    downloadOnStartup: true
+    # URL to download transformation grids from
+    sourceUrl: "https://cdn.proj.org/"
+
+# Worker configuration
+worker:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: opengisch/qfieldcloud-app
+    tag: latest
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  # Kubernetes job configuration
+  kubernetes:
+    enabled: false  # Set to true to use Kubernetes jobs instead of Docker
+    namespace: default  # Namespace where jobs will be created
+    resources:
+      limits:
+        cpu: 1000m  # 1 CPU core
+        memory: 2Gi
+      requests:
+        cpu: 500m
+        memory: 1Gi
+    # Storage class for temporary volumes
+    storageClass: standard
+    # Node selector for job pods
+    nodeSelector: {}
+    # Tolerations for job pods
+    tolerations: []
+    # Affinity rules for job pods
+    affinity: {}
+
+# Memcached configuration
+memcached:
+  enabled: true
+  image:
+    repository: memcached
+    tag: "1"
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
+
+# Cron jobs configuration
+cronJobs:
+  enabled: true
+  image:
+    repository: opengisch/qfieldcloud-app
+    tag: latest
+    pullPolicy: IfNotPresent
+  schedule: "@every 1m"
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 80
+
+# Ingress configuration
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+# Resource configuration
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+# Pod configuration
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Persistent volume configuration
+persistence:
+  transformationGrids:
+    enabled: true
+    size: 1Gi
+    accessMode: ReadWriteOnce
+    storageClass: ""  # Use default storage class if empty
+
+serviceAccount:
+  create: true
+  name: "" 

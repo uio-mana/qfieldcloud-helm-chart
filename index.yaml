@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  qfieldcloud:
+    - apiVersion: v2
+      appVersion: "1.0.0"
+      created: "2024-03-19T00:00:00Z"
+      description: A Helm chart for QField Cloud
+      digest: ""
+      name: qfieldcloud
+      type: application
+      urls:
+        - qfieldcloud-0.1.0.tgz
+      version: 0.1.0
+generated: "2024-03-19T00:00:00Z" 

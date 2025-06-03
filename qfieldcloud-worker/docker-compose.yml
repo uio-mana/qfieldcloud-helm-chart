@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        TRANSFORMATION_GRIDS_URL: ${TRANSFORMATION_GRIDS_URL:-https://cdn.proj.org}
+      platforms:
+        - linux/amd64
+      x-bake:
+        platforms:
+          - linux/amd64
+        cache-from:
+          - type=registry,ref=gbifnorway/qfieldcloud-worker:buildcache
+        cache-to:
+          - type=registry,ref=gbifnorway/qfieldcloud-worker:buildcache,mode=max
+    image: gbifnorway/qfieldcloud-worker:${TAG:-latest}

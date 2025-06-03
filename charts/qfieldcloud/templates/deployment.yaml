@@ -1,0 +1,141 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "qfieldcloud.fullname" . }}
+  labels:
+    {{- include "qfieldcloud.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "qfieldcloud.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "qfieldcloud.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "qfieldcloud.serviceAccountName" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - gunicorn
+            - qfieldcloud.wsgi:application
+            - --bind
+            - 0.0.0.0:{{ .Values.service.port }}
+            - --timeout
+            - {{ .Values.django.gunicorn.timeout | quote }}
+            - --max-requests
+            - {{ .Values.django.gunicorn.maxRequests | quote }}
+            - --workers
+            - {{ .Values.django.gunicorn.workers | quote }}
+            - --threads
+            - {{ .Values.django.gunicorn.threads | quote }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          env:
+            - name: DJANGO_ALLOWED_HOSTS
+              value: {{ .Values.django.settings.allowedHosts | quote }}
+            - name: DJANGO_SETTINGS_MODULE
+              value: {{ .Values.django.settings.settingsModule | quote }}
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "qfieldcloud.fullname" . }}-django
+                  key: secret-key
+            - name: DEBUG
+              value: {{ .Values.django.settings.debug | quote }}
+            - name: ENVIRONMENT
+              value: {{ .Values.django.settings.environment | quote }}
+            - name: SENTRY_DSN
+              value: {{ .Values.django.sentry.dsn | quote }}
+            - name: SENTRY_RELEASE
+              value: {{ .Values.django.sentry.release | quote }}
+            - name: SENTRY_ENVIRONMENT
+              value: {{ .Values.django.settings.environment | quote }}
+            - name: SENTRY_SAMPLE_RATE
+              value: {{ .Values.django.sentry.sampleRate | quote }}
+            - name: POSTGRES_DB
+              value: {{ .Values.database.name | quote }}
+            - name: POSTGRES_USER
+              value: {{ .Values.database.user | quote }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "qfieldcloud.fullname" . }}-database
+                  key: password
+            - name: POSTGRES_HOST
+              value: {{ .Values.database.host | quote }}
+            - name: POSTGRES_PORT
+              value: {{ .Values.database.port | quote }}
+            - name: POSTGRES_SSLMODE
+              value: {{ .Values.database.sslMode | quote }}
+            - name: MINIO_API_PORT
+              value: {{ .Values.django.storage.minioApiPort | quote }}
+            - name: MINIO_BROWSER_PORT
+              value: {{ .Values.django.storage.minioBrowserPort | quote }}
+            - name: STORAGES
+              value: {{ .Values.django.storage.storagesConfig | toJson | quote }}
+            - name: STORAGES_PROJECT_DEFAULT_STORAGE
+              value: {{ .Values.django.storage.projectDefaultStorage | quote }}
+            - name: GEODB_HOST
+              value: {{ .Values.geodatabase.host | quote }}
+            - name: GEODB_PORT
+              value: {{ .Values.geodatabase.port | quote }}
+            - name: GEODB_USER
+              value: {{ .Values.geodatabase.user | quote }}
+            - name: GEODB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "qfieldcloud.fullname" . }}-geodatabase
+                  key: password
+            - name: GEODB_DB
+              value: {{ .Values.geodatabase.name | quote }}
+            - name: ACCOUNT_EMAIL_VERIFICATION
+              value: {{ .Values.django.settings.accountEmailVerification | quote }}
+            - name: EMAIL_HOST
+              value: {{ .Values.django.email.host | quote }}
+            - name: EMAIL_USE_TLS
+              value: {{ .Values.django.email.useTls | quote }}
+            - name: EMAIL_USE_SSL
+              value: {{ .Values.django.email.useSsl | quote }}
+            - name: EMAIL_PORT
+              value: {{ .Values.django.email.port | quote }}
+            - name: EMAIL_HOST_USER
+              value: {{ .Values.django.email.hostUser | quote }}
+            - name: EMAIL_HOST_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "qfieldcloud.fullname" . }}-email
+                  key: password
+            - name: DEFAULT_FROM_EMAIL
+              value: {{ .Values.django.email.defaultFromEmail | quote }}
+            - name: QFIELDCLOUD_SUBSCRIPTION_MODEL
+              value: {{ .Values.django.settings.subscriptionModel | quote }}
+            - name: QFIELDCLOUD_AUTH_TOKEN_EXPIRATION_HOURS
+              value: {{ .Values.django.settings.authTokenExpirationHours | quote }}
+            - name: QFIELDCLOUD_USE_I18N
+              value: {{ .Values.django.settings.useI18n | quote }}
+            - name: QFIELDCLOUD_DEFAULT_LANGUAGE
+              value: {{ .Values.django.settings.defaultLanguage | quote }}
+            - name: QFIELDCLOUD_DEFAULT_TIME_ZONE
+              value: {{ .Values.django.settings.defaultTimeZone | quote }}
+            - name: QFIELDCLOUD_QGIS_IMAGE_NAME
+              value: {{ .Values.qgis.image.repository }}:{{ .Values.qgis.image.tag }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }} 

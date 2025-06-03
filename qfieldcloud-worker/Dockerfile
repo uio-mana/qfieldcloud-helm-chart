@@ -1,7 +1,9 @@
 FROM opengisch/qfieldcloud-app:latest
 
-# Install Kubernetes Python client
+# Install Kubernetes Python client as root
+USER root
 RUN pip3 install kubernetes
+USER app
 
 # Create transformation grids directory and download grids
 RUN mkdir -p /transformation_grids

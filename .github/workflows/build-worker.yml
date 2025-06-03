@@ -56,4 +56,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           platforms: linux/amd64
           cache-from: type=gha
-          cache-to: type=gha,mode=max 
+          cache-to: type=gha,mode=max
+          build-args: |
+            TRANSFORMATION_GRIDS_URL=https://cdn.proj.org 
